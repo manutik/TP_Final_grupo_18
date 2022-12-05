@@ -6,21 +6,43 @@ using System.Threading.Tasks;
 
 namespace tp_final
 {
-    internal class cVehiculo
+    public class cVehiculo   
     {
-        void cargarcamiones()
-        { 
-            
+        protected string modelo;
+        protected float anchoMax;
+        protected float largoMax;
+        protected float altoMax;
+        public string PATENTE;
+        public float contvolumen;
+        public float contkilos;
+        public float cantcombustible;
+        public float kilos;
+        public float volumen;
+        public float combustible;
+        public List<Pedido> entregas;
+
+
+        public cVehiculo(string modelo, float anchoMax, float largoMax, float altoMax, string PATENTE, float Volumen, float Combustible, float kilos)
+        {
+            this.modelo = modelo;
+            this.anchoMax = anchoMax;
+            this.largoMax = largoMax;
+            this.altoMax = altoMax;
+            this.PATENTE = PATENTE;
+            combustible = Combustible;
+            volumen = Volumen;
+            entregas = new List<Pedido>();
+            this.kilos = kilos;
         }
 
-        void cargarkangoo()
-        { 
-            
-        }
 
-        void mandararepartir()
-        { 
-            
+        public void ordenarentregas()
+        {
+            for(int i = 0; i < entregas.Count; i++)
+            {
+                if(entregas[i].distancia(comuna9, entregas[i].ebarrio)
+            }
         }
+       
     }
 }

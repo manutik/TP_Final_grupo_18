@@ -3,9 +3,11 @@ using CsvHelper.Configuration;
 using System.Globalization;
 using System.Collections.Generic;
 using tp_final.Properties;
+using tp_final;
 
 namespace csvfiles {
     public class _csv {
+
         public List<Pedido> read_csv() {
             using (var reader = new StreamReader(Resources.archivo))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture)) {
@@ -24,7 +26,9 @@ namespace csvfiles {
                         alto = csv.GetField<float>("alto"),
                         prioridad = csv.GetField<string>("prioridad"),
                         barrio = csv.GetField<string>("barrio"),
-                        fecha = new DateTime(csv.GetField<int>("fecha"))
+                        fecha = new DateTime(csv.GetField<int>("fecha")),
+                        asignado = false
+                        
                     };
                     records.Add(record);
                 }
@@ -46,4 +50,18 @@ public class Pedido {
     public string? prioridad { get; set; }
     public string? barrio { get; set; }
     public DateTime fecha { get; set; }
+    public int dia;
+    public bool asignado;
+    public bool lineablanca;
+    public float vol;
+    public cBarrio ebarrio;
+    public float distancia(cBarrio desde, cBarrio hasta)
+    {
+        float dist = 0;
+        if (desde != null && hasta != null)
+        {
+            dist = (float)Math.Sqrt((hasta.x - desde.x) * (hasta.x - desde.x) + (hasta.y - desde.y) * (hasta.y - desde.y));
+        }
+        return dist;
+    }
 }
