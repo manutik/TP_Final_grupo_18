@@ -10,6 +10,7 @@ public partial class Form1 : Form
         var csv_ = new csvfiles._csv();
         List<Pedido> Pedidos = csv_.read_csv();
         //creamos los barrios
+        inventamos();
         cBarrio Comuna1 = new cBarrio("comuna 1", 5, 3);
         cBarrio Comuna2 = new cBarrio("comuna 2", 4, 4);
         cBarrio Comuna3 = new cBarrio("comuna 3", 3, 2);
@@ -34,14 +35,49 @@ public partial class Form1 : Form
         cBarrio sanmartin = new cBarrio("san martin", -4, 5);
         cBarrio vicentelopez = new cBarrio("vicente lopez", -4, 6);
         cBarrio sanisidro = new cBarrio("san isidro", -5, 6);
+
+        //ACOMODAMOS LA DATA DE NUESTROS PEDIDOS
         ponerbarrio();
         ponerdia();
-        ponerlinea();
-        ponervol();
-        cVehiculo camion = new cVehiculo("Iveco Daily", (float)2.61, (float)5.12, 2, "KGF 251", (float)10800, (float)8.9, 7000);
-        cVehiculo furgoneta = new cVehiculo("Fiat ducato", (float)2.61, (float)5.12, 2, "KGF 251", (float)17000, (float)8.9, 7000);
+        ponerlinea();//SI ES LINEA BLANCA O NO
+        ponervol();//EL VOLUMEN 
+        ponerdist();
+  
+        cVehiculo camion = new cVehiculo("Iveco Daily", (float)2.61, (float)5.12, 2, "KGF 251", (float)10.8, (float)8.9, 7000);
+        cVehiculo furgoneta = new cVehiculo("Fiat ducato", (float)2.61, (float)5.12, 2, "KGF 251", (float)17, (float)8.9, 7000);
         cVehiculo kangoo = new cVehiculo("renault kangoo", (float)2.61, (float)5.12, 2, "KGF 251", (float)10.8, (float)8.9, 7000);
 
+        for(int dia = 0;dia < 3;dia++)
+        {
+            Console.WriteLine("Bienvenido a cocimundo");
+            Console.WriteLine("A continuacion cargaremos los pedidos del dia %d", dia);
+            cargarcamiones(dia);
+            cargarkangoo(dia);
+            Console.WriteLine("A continuacion realizamos entregas del dia %d", dia);
+            //ORDENAMOS LAS ENTREGAS SEGUN LA DISTANCIA PARA LA REPARTIJA
+            camion.ordenarentregas();
+            furgoneta.ordenarentregas();
+            kangoo.ordenarentregas();
+            //REPARTIMOS
+            foreach (var pedido in camion.entregas)//BUCLE FOR QUE RECORRE LA LISTA DE CADA VEHICULO
+            {
+                Console.WriteLine(camion.entregas);
+            }
+            foreach (var pedido in furgoneta.entregas)
+            {
+                Console.WriteLine(furgoneta.entregas);
+            }
+            foreach (var pedido in kangoo.entregas)
+            {
+                Console.WriteLine(kangoo.entregas);
+            }
+
+            float plata = calcularrecaudado(dia);
+            Console.WriteLine("finalizamos el dia %d", dia);
+            Console.WriteLine("recaudado en el dia %f", plata);
+
+        }
+        
 
 
 
@@ -49,9 +85,23 @@ public partial class Form1 : Form
 
 
         // FUNCIONES
+        float calcularrecaudado(int dia)
+        {
+            float pla = 0;
+            for(int u=0; u<Pedidos.Count; u++)
+            {
+                if (Pedidos[u].dia==dia)
+                {
+                    pla = pla + Pedidos[u].precio;
+                }
+            }
+            return pla;
+        }
+
+
         void ponerbarrio()
         {
-            for(int i = 0; i < Pedidos.Count; i++)
+            for (int i = 0; i < Pedidos.Count; i++)
             {
                 if (Pedidos[i] != null)
                 {
@@ -154,6 +204,8 @@ public partial class Form1 : Form
                 }
             }
         }
+
+
         void ponerdia()//les asignamos el numero del dia que sarpa la entrega segun prioridad
         {
             for (int i = 0; i < Pedidos.Count; i++)
@@ -176,6 +228,8 @@ public partial class Form1 : Form
             }
 
         }
+
+
         void ponerlinea()
         {
             for (int i = 0; i < Pedidos.Count; i++)
@@ -194,6 +248,8 @@ public partial class Form1 : Form
             }
 
         }
+
+
         void ponervol()
         {
             for (int i = 0; i < Pedidos.Count; i++)
@@ -204,6 +260,19 @@ public partial class Form1 : Form
                 }
             }
         }
+
+
+        void ponerdist()
+        {
+            for (int i = 0; i < Pedidos.Count; i++)
+            {
+                if (Pedidos[i] != null)
+                {
+                    Pedidos[i].dist_a_liniers = Pedidos[i].distancia(Comuna9, Pedidos[i].ebarrio);
+                }
+            }
+        }
+
 
         void cargarcamiones(int dia)
         {
@@ -219,59 +288,72 @@ public partial class Form1 : Form
                             camion.contvolumen = camion.contvolumen + Pedidos[i].vol;
                             camion.contkilos = camion.contkilos + camion.kilos;
                         }
-                        else if (furgoneta.contkilos<furgoneta.kilos && furgoneta.contvolumen<furgoneta.volumen)
+                        else if (furgoneta.contkilos < furgoneta.kilos && furgoneta.contvolumen < furgoneta.volumen)
                         {
                             furgoneta.entregas.Add(Pedidos[i]);
                             furgoneta.contvolumen = furgoneta.contvolumen + Pedidos[i].vol;
                             furgoneta.contkilos = furgoneta.contkilos + furgoneta.kilos;
                         }
                     }
-                    else
+                    /*else
                     {
-                        
-                    }
+                        if (camion.contkilos < camion.kilos && camion.contvolumen < camion.volumen)
+                        {
+                            //var newList = list.OrderBy(x => x.Product.Name).ToList();
+                            //cityNames.OrderByDescending(city => city).ToList();
+                            //List<Pedido>listaaux = camion.entregas.OrderByDescending(Pedidos => .dist_a_liniers);
+                            camion.ordenarentregas();
+                            int h = 0;
+                            do
+                            {
+                                for(int j = 0; j < camion.entregas.Count; j++)
+                                {
+                                    if (camion.entregas[j].ebarrio == camion.entregas[h].ebarrio)
+                                    {
+                                        camion.entregas.Add(Pedidos[i]);
+                                        camion.contvolumen = camion.contvolumen + Pedidos[i].vol;
+                                        camion.contkilos = camion.contkilos + camion.kilos;
+                                    }
+                                }
+                                h++;
+                            }while(camion.contvolumen < camion.volumen && camion.contkilos < camion.kilos);
+                            
+
+                        }
+                    }*/
                 }
             }
+            if (camion.contkilos < camion.kilos && camion.contvolumen < camion.volumen)
+            {
+                //var newList = list.OrderBy(x => x.Product.Name).ToList();
+                //cityNames.OrderByDescending(city => city).ToList();
+                //List<Pedido>listaaux = camion.entregas.OrderByDescending(Pedidos => .dist_a_liniers);
+                camion.ordenarentregas();
+                int h = 0;
+                do
+                {
+                    for (int j = 0; j < camion.entregas.Count; j++)
+                    {
+                        if (camion.entregas[j].ebarrio == camion.entregas[h].ebarrio)
+                        {
+                            camion.entregas.Add(Pedidos[j]);
+                            camion.contvolumen = camion.contvolumen + Pedidos[j].vol;
+                            camion.contkilos = camion.contkilos + camion.kilos;
+                        }
+                    }
+                    h++;
+                } while (camion.contvolumen < camion.volumen && camion.contkilos < camion.kilos);// ||
 
+
+            }
         }
 
-        void cargarkangoo()
+
+        void cargarkangoo(int dia)
         {
 
         }
 
-        void mandararepartir()
-        {
 
-        }
-
-        /*void inventamos()
-        {
-            cBarrio Comuna1 = new cBarrio("comuna 1", 5, 3);
-            cBarrio Comuna2 = new cBarrio("comuna 2", 4, 4);
-            cBarrio Comuna3 = new cBarrio("comuna 3", 3, 2);
-            cBarrio Comuna4 = new cBarrio("comuna 4", 4, 1);
-            cBarrio Comuna5 = new cBarrio("comuna 5", 2, 2);
-            cBarrio Comuna6 = new cBarrio("comuna 6", 1, 2);
-            cBarrio Comuna7 = new cBarrio("comuna 7", 0, 1);
-            cBarrio Comuna8 = new cBarrio("comuna 8", 1, -1);
-            cBarrio Comuna9 = new cBarrio("comuna 9", 0, 0);//LINIERS
-            cBarrio Comuna10 = new cBarrio("comuna 10", -3, 1);
-            cBarrio Comuna11 = new cBarrio("comuna 11", -2, 3);
-            cBarrio Comuna12 = new cBarrio("comuna 12", -3, 5);
-            cBarrio Comuna13 = new cBarrio("comuna 13", -1, 6);
-            cBarrio Comuna14 = new cBarrio("comuna 14", 2, 5);
-            cBarrio Comuna15 = new cBarrio("comuna 15", 0, 4);
-            cBarrio avellaneda = new cBarrio("avellaneda", 5, 0);
-            cBarrio lanus = new cBarrio("lanus", 3, -1);
-            cBarrio lomas = new cBarrio("lomas de zamora", 2, -2);
-            cBarrio lamatanza = new cBarrio("la matanza", -1, -1);
-            cBarrio moron = new cBarrio("comuna 1", -5, 0);
-            cBarrio tresdefeb = new cBarrio("tres de febrero", -4, 3);
-            cBarrio sanmartin = new cBarrio("san martin", -4, 5);
-            cBarrio vicentelopez = new cBarrio("vicente lopez", -4, 6);
-            cBarrio sanisidro = new cBarrio("san isidro", -5, 6);
-
-        }*/
     }
 }

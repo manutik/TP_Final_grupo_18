@@ -54,7 +54,13 @@ public class Pedido {
     public bool asignado;
     public bool lineablanca;
     public float vol;
-    public cBarrio ebarrio;
+    public cBarrio ebarrio=null;
+    public float dist_a_liniers;
+    public string tostringentregas()
+    {
+        string aux = producto + "  " + barrio + "  " + prioridad;
+        return aux;
+    }
     public float distancia(cBarrio desde, cBarrio hasta)
     {
         float dist = 0;
@@ -64,4 +70,5 @@ public class Pedido {
         }
         return dist;
     }
+    
 }
