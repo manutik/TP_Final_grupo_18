@@ -33,6 +33,8 @@ namespace tp_final
             volumen = Volumen;
             entregas = new List<Pedido>();
             this.kilos = kilos;
+            contkilos = 1;
+            contvolumen = 0;
         }
 
 
