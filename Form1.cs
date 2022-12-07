@@ -43,40 +43,61 @@ public partial class Form1 : Form
         ponervol();//EL VOLUMEN 
         ponerdist();
   
-        cVehiculo camion = new cVehiculo("Iveco Daily", (float)2.61, (float)5.12, 2, "KGF 251", (float)10.8, (float)8.9, 7000);
-        cVehiculo furgoneta = new cVehiculo("Fiat ducato", (float)2.61, (float)5.12, 2, "KGF 251", (float)17, (float)8.9, 7000);
-        cVehiculo kangoo = new cVehiculo("renault kangoo", (float)2.61, (float)5.12, 2, "KGF 251", (float)10.8, (float)8.9, 7000);
+        cVehiculo camion = new cVehiculo("Iveco Daily", (float)2.61, (float)5.12, (float)2.0, "KGF 251", (float)10800000, (float)8.9, 7000);
+        cVehiculo furgoneta = new cVehiculo("Fiat ducato", (float)2.05, (float)5.41, (float)2.52, "GRL 793", (float)17000000, (float)6.9, 3500);
+        cVehiculo kangoo = new cVehiculo("renault kangoo", (float)1.17, (float)3.09, (float)1.23, "PTX 517", (float)44500000, (float)7.6, 750);
 
         List<Pedido> buffer = new List<Pedido>();
-        for (int dia = 0;dia < 3;dia++)
+        for (int dia = 1;dia < 4;dia++)
         {
             Console.WriteLine("Bienvenido a cocimundo");
-            Console.WriteLine("A continuacion cargaremos los pedidos del dia %d", dia);
+            Console.WriteLine("A continuacion cargaremos los pedidos del dia:");
+            Console.WriteLine(dia);
             buffer = devuelvebuffer(dia);
             cargarcamiones(dia);
-            cargarkangoo(dia);
-            Console.WriteLine("A continuacion realizamos entregas del dia %d", dia);
+            for (int y = 0; y < 4; y++)
+            {
+                if (buffer.Count != 0)
+                {
+                    cargarkangoo(dia);
+                }
+            }
+            Console.WriteLine("A continuacion realizamos entregas del dia");
+            Console.WriteLine(dia);
             //ORDENAMOS LAS ENTREGAS SEGUN LA DISTANCIA PARA LA REPARTIJA
             camion.ordenarentregas();
             furgoneta.ordenarentregas();
             kangoo.ordenarentregas();
+
+
             //REPARTIMOS
-            foreach (var pedido in camion.entregas)//BUCLE FOR QUE RECORRE LA LISTA DE CADA VEHICULO
+            Console.WriteLine("\n\n");
+            Console.WriteLine("ENTREGAS DEL CAMION");
+            for (int w=0; w<camion.entregas.Count ;w++)
             {
-                Console.WriteLine(camion.entregas);
+                Console.WriteLine(camion.entregas[w].tostringentregas());
             }
-            foreach (var pedido in furgoneta.entregas)
+            Console.WriteLine("\n\n");
+            Console.WriteLine("ENTREGAS DE LA FURGONETA");
+            for (int w = 0; w < furgoneta.entregas.Count; w++)
             {
-                Console.WriteLine(furgoneta.entregas);
+                Console.WriteLine(furgoneta.entregas[w].tostringentregas());
             }
-            foreach (var pedido in kangoo.entregas)
+            Console.WriteLine("\n\n");
+            Console.WriteLine("ENTREGAS DE LA KANGOO");
+            for (int w = 0; w < kangoo.entregas.Count; w++)
             {
-                Console.WriteLine(kangoo.entregas);
+                Console.WriteLine(kangoo.entregas[w].tostringentregas());
             }
 
+            string enter;
             float plata = calcularrecaudado(dia);
-            Console.WriteLine("finalizamos el dia %d", dia);
-            Console.WriteLine("recaudado en el dia %f", plata);
+            Console.WriteLine("finalizamos el dia");
+            Console.WriteLine(dia);
+            Console.WriteLine("recaudado en el dia");
+            Console.WriteLine(plata);
+            Console.WriteLine("aprete enter para continuar con el siguiente dia");
+            enter = Console.ReadLine();
 
         }
         
@@ -266,7 +287,7 @@ public partial class Form1 : Form
             {
                 if (Pedidos[i] != null)
                 {
-                    if (Pedidos[i].producto == "cocina" || Pedidos[i].producto == "calefon" || Pedidos[i].producto == "lavarropas" || Pedidos[i].producto == "heladera" || Pedidos[i].producto == "microondas" || Pedidos[i].producto == "freezer")
+                    if (Pedidos[i].producto == "cocinas" || Pedidos[i].producto == "calefones" || Pedidos[i].producto == "lavarropas" || Pedidos[i].producto == "heladeras" || Pedidos[i].producto == "termotanques" || Pedidos[i].producto == "freezers")
                     {
                         Pedidos[i].lineablanca = true;
                     }
@@ -310,7 +331,7 @@ public partial class Form1 : Form
             {
                 if (buffer[i].asignado == false)
                 {
-                    if (buffer[i].lineablanca == true && buffer[i].asignado != true)
+                    if (buffer[i].lineablanca == true)
                     {
                         if (camion.contkilos < camion.kilos && camion.contvolumen < camion.volumen)
                         {
@@ -346,7 +367,7 @@ public partial class Form1 : Form
                         }
                     }
                     h++;
-                } while ((camion.contvolumen < camion.volumen && camion.contkilos < camion.kilos)||(buffer.Count==0) );
+                } while ((camion.contvolumen < camion.volumen) && (buffer.Count!=0) && (h<(camion.entregas.Count-1)));
             }
 
             //ORDENO LOS PEDIDOS QUE ME FALTAN SEGUN DISTANCIA A LINIERS ASI LOS PUEDO AGREGAR DIRECTO
@@ -365,10 +386,15 @@ public partial class Form1 : Form
 
         void cargarkangoo(int dia)
         {
-            do
+            for(int i = 0; i < buffer.Count; i++)
             {
-
-            }while (kangoo.contvolumen<kangoo.volumen || buffer.Count != 0);
+                if (kangoo.contvolumen < kangoo.volumen)
+                {
+                    kangoo.entregas.Add(buffer[i]);
+                    kangoo.contvolumen = kangoo.contvolumen + buffer[i].vol;
+                    buffer.RemoveAt(i);
+                }
+            }
         }
 
 

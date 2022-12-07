@@ -40,8 +40,7 @@ namespace tp_final
 
         public void ordenarentregas()
         {
-            
-            entregas.Sort(delegate (Pedido x, Pedido y) { return x.dist_a_liniers.CompareTo(y.dist_a_liniers); });
+            entregas.Sort(delegate (Pedido x, Pedido y) { return y.dist_a_liniers.CompareTo(x.dist_a_liniers); });
             /*entregas.OrderByDescending<Pedido,Pedido dist_a_liniers>
             Pedido aux = entregas[0];
             for(int i = 0; i < entregas.Count; i++)
